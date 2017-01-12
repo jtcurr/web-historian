@@ -26,38 +26,41 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(webSiteName) {
-  var arrayUrls;
   fs.readFile(__dirname + '/../archives/sites.txt', 'utf8', (err, data) => {
     if (err) {
       throw err;
     }
+    var arrayUrls;
     //generate array of Urls, split on every line, and trim off stringify quotes (first and last items have extra quote)
     arrayUrls = JSON.stringify(data);
     arrayUrls = (arrayUrls.split('\\n'));
 
     arrayUrls[0] = arrayUrls[0].slice(1, ( arrayUrls[0].length ));
-    
+
     arrayUrls[arrayUrls.length - 1] = arrayUrls[arrayUrls.length - 1].slice(0, ( arrayUrls[arrayUrls.length - 1].length - 1 ));
 
-    return arrayUrls;
+    exports.isUrlInList(webSiteName, arrayUrls);
 
   });
-
 };
 
 exports.isUrlInList = function(webSiteName, listOfUrls) {
   if ( listOfUrls.indexOf(webSiteName) === -1 ) {
     // call addUrlToList
+    exports.addUrlToList(webSiteName, listOfUrls);
   } else {
     // call isUrlArchived
+    exports.isUrlArchived(webSiteName);
   }
 };
 
-exports.addUrlToList = function() {
+exports.addUrlToList = function(webSiteName, listOfUrls) {
+  // listOfUrls.push(webSiteName);
+  
 };
 
-exports.isUrlArchived = function() {
+exports.isUrlArchived = function(webSiteName) {
 };
 
-exports.downloadUrls = function() {
+exports.downloadUrls = function(webSiteName) {
 };

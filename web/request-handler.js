@@ -2,7 +2,7 @@ var path = require('path');
 var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 var fs = require('fs');
-
+var qs = require('querystring');
 
 
 
@@ -25,7 +25,14 @@ exports.handleRequest = function (req, res) {
     });
   }
   if ( req.method === 'POST' ) {
-    archive.readListOfUrls(); // with req.url without first /
+    var urlInput = '';
+    req.on ('data', (chunk) => {
+      urlInput += chunk;
+    });
+    req.on ('end', () => {
+      var data = qs.parse(urlInput);
+      archive.readListOfUrls(data.url);
+    });
   }
   // var urlSplit = req.url.split('.');
   // urlSplit = urlSplit[urlSplit.length - 1];

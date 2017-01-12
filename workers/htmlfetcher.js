@@ -2,6 +2,8 @@
 // that are waiting.
 var http = require('http');
 var until = require('util');
+var fs = require('fs');
+var archive = require('../helpers/archive-helpers');
 module.exports = function (webSiteName) {
   // go to webSiteName
     //retrieve the HTML
@@ -21,18 +23,21 @@ module.exports = function (webSiteName) {
 
     res.on('end', function () {
       until.log('hello');
-      // until.log(content);
+      fs.open(__dirname + '/../archives/sites/' + webSiteName, 'w', (err, fd) => {
+        if (err) {
+          console.log('ERROR creating file for site');
+        }
+        fs.appendFile(__dirname + '/../archives/sites/' + webSiteName, content, (err) => {
+          if (err) {
+            console.log('Failed to write content to file!');
+          }
+        });
+        archive.addUrlToList(webSiteName);
+        fs.close(fd);
+      });
     });
   });
   req.end();
-
-
-
-
-
-
-  // var htmlFetched = $('html').load(webSiteName);
-  // console.log(htmlFetched);
 
 
 

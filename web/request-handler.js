@@ -31,7 +31,8 @@ exports.handleRequest = function (req, res) {
     });
     req.on ('end', () => {
       var data = qs.parse(urlInput);
-      archive.readListOfUrls(data.url);
+      var cb = function (data) { res.end(data); }.bind(this);
+      archive.readListOfUrls(data.url, cb);
     });
   }
   // var urlSplit = req.url.split('.');

@@ -27,7 +27,7 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(webSiteName) {
+exports.readListOfUrls = function(webSiteName, cb) {
   fs.readFile(__dirname + '/../archives/sites.txt', 'utf8', (err, data) => {
     if (err) {
       throw err;
@@ -40,21 +40,20 @@ exports.readListOfUrls = function(webSiteName) {
     arrayUrls[0] = arrayUrls[0].slice(1, ( arrayUrls[0].length ));
 
     arrayUrls[arrayUrls.length - 1] = arrayUrls[arrayUrls.length - 1].slice(0, ( arrayUrls[arrayUrls.length - 1].length - 1 ));
-    console.log(arrayUrls);
-    exports.isUrlInList(webSiteName, arrayUrls);
+    exports.isUrlInList(webSiteName, arrayUrls, cb);
 
   });
 };
 
-exports.isUrlInList = function(webSiteName, listOfUrls) {
+exports.isUrlInList = function(webSiteName, listOfUrls, cb) {
   if ( listOfUrls.indexOf(webSiteName) === -1 ) {
-    exports.downloadUrls(webSiteName);
+    exports.downloadUrls(webSiteName, cb);
     // if it's not there
       //call downloadUrls
         //send back loading.html
   } else {
     // call isUrlArchived
-    exports.isUrlArchived(webSiteName);
+    exports.isUrlArchived(webSiteName, cb);
   }
 };
 
@@ -67,27 +66,23 @@ exports.addUrlToList = function(webSiteName) {
 
 };
 
-exports.isUrlArchived = function(webSiteName) {
-  //search sites and return html of webSiteName
+exports.isUrlArchived = function(webSiteName, cb) {
+  fs.readFile(__dirname + '/../archives/sites/' + webSiteName, 'utf-8', (err, data) => {
+    if (err) {
+      throw err;
+    }
+    cb(data);
+  });
 };
 
-exports.downloadUrls = function(webSiteName) {
+exports.downloadUrls = function(webSiteName, cb) {
   htmlfetcher(webSiteName);
-
-
 
   fs.readFile(__dirname + '/../web/public/loading.html', 'utf-8', (err, data) => {
     if (err) {
       throw err;
     }
-    console.log('hello arglebargle');
-    http.createServer( (request, response) => {
-      response.writeHeader(200, {'Content-Type': 'text/html'});
-      response.write(data);
-      response.end();
-    }).listen(8080);
+    cb(data);
   });
-  // calls htmlfetcher
-    //calls addUrlToList
 
 };
